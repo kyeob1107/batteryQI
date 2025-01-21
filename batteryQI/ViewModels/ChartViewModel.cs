@@ -179,8 +179,30 @@ namespace batteryQI.ViewModels
             for (int i = 0; i < pointCount; i++)
                 positions[i] = start.AddHours(i).ToOADate();
 
+            // 최소~최대 사이의 시간대의 count가 0이라 빠진 부분 0으로 추가하여 x, y 길이 맞추기
+            // Timestamps와 Values를 이용하여 딕셔너리 생성
+            Dictionary<double, double> valuesDict = new Dictionary<double, double>();
+            for (int i = 0; i < TimeStamps.Length; i++)
+            {
+                valuesDict[TimeStamps[i].ToOADate()] = Values[i];
+            }
+
+            // ValuesCompletedHour 생성 및 채우기
+            double[] ValuesCompletedHour = new double[positions.Length];
+            for (int i = 0; i < positions.Length; i++)
+            {
+                if (valuesDict.TryGetValue(positions[i], out double value))
+                {
+                    ValuesCompletedHour[i] = value;
+                }
+                else
+                {
+                    ValuesCompletedHour[i] = 0;
+                }
+            }
+
             // display the bar plot using a time axis
-            var bar = plot.AddBar(Values, positions);
+            var bar = plot.AddBar(ValuesCompletedHour, positions);
             plot.XAxis.DateTimeFormat(true); //x축 포멧을 DateTime으로 설정
             //plot.Frameless(false);
             //plot.XAxis.Ticks(true);
