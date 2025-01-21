@@ -75,15 +75,47 @@ namespace batteryQI.ViewModels
     }
     public class TabControlViewModel : ViewModelBases
     {
-
+        private TabItemViewModel _selectedTab;
+        public TabItemViewModel SelectedTab
+        {
+            get => _selectedTab;
+            set
+            {
+                if (SetProperty(ref _selectedTab, value))
+                {
+                    UpdateChartContent();
+                }
+            }
+        }
         public ObservableCollection<TabItemViewModel> Tabs { get; } = new ObservableCollection<TabItemViewModel>();
 
         public TabControlViewModel() // 이부분 생성자 인자 들억가는 것 따로 구조체 같은 것으로 필드해서 만들면 더 좋을듯
         {
 
-            Tabs.Add(new TabItemViewModel { Header = "시간대별 불량수", Content = new HourlyDefectChartViewModel("batteryInfo", "shootDate", "timestamp") });
-            Tabs.Add(new TabItemViewModel { Header = "불량유형", Content = new DefectTypePieViewModel() });
-            Tabs.Add(new TabItemViewModel { Header = "기준별 불량유형", Content = new DefectTypeChartByCategoryViewModel("batteryInfo", "batteryType, defectName", "groupbar") });
+            Tabs.Add(new TabItemViewModel { Header = "시간대별 불량수", Content = typeof(HourlyDefectChartViewModel) });
+            Tabs.Add(new TabItemViewModel { Header = "불량유형", Content = typeof(DefectTypePieViewModel) });
+            Tabs.Add(new TabItemViewModel { Header = "기준별 불량유형", Content = typeof(DefectTypeChartByCategoryViewModel) });
+            SelectedTab = Tabs[0];
+        }
+
+        private void UpdateChartContent()
+        {
+            if (SelectedTab.Content is Type viewModelType)
+            {
+                SelectedTab.Content = CreateChartViewModel(viewModelType);
+            }
+        }
+
+        private ChartViewModel CreateChartViewModel(Type viewModelType)
+        {
+            if (viewModelType == typeof(HourlyDefectChartViewModel))
+                return new HourlyDefectChartViewModel("batteryInfo", "shootDate", "timestamp");
+            else if (viewModelType == typeof(DefectTypePieViewModel))
+                return new DefectTypePieViewModel();
+            else if (viewModelType == typeof(DefectTypeChartByCategoryViewModel))
+                return new DefectTypeChartByCategoryViewModel("batteryInfo", "batteryType, defectName", "groupbar");
+            else
+                throw new ArgumentException("Unknown ViewModel type");
         }
     }
     

@@ -31,26 +31,11 @@ namespace batteryQI.Extensions
 
         private static void OnPlotDataChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            if (d is WpfPlot wpfPlot)
+            if (d is WpfPlot wpfPlot && e.NewValue is ChartViewModel chartViewModel)
             {
-                var data = e.NewValue;
                 wpfPlot.Plot.Clear();
-                //wpfPlot.Render();
                 wpfPlot.Plot.AxisAuto();
-
-                if (data is DefectTypePieViewModel DefectTypePieData)
-                {
-                    DefectTypePieData.ConfigureChart(wpfPlot.Plot);
-                }
-                else if (data is HourlyDefectChartViewModel HourlyDefectChartData)
-                {
-                    HourlyDefectChartData.ConfigureChart(wpfPlot.Plot);
-                }
-                else if (data is DefectTypeChartByCategoryViewModel DefectTypeChartByCategoryData)
-                {
-                    DefectTypeChartByCategoryData.ConfigureChart(wpfPlot.Plot);
-                }
-
+                chartViewModel.ConfigureChart(wpfPlot.Plot);
                 wpfPlot.Refresh();
             }
         }

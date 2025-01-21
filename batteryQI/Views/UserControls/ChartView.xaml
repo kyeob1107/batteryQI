@@ -17,7 +17,7 @@
             <TabControl.ContentTemplate>
                 <!-- ChartView와 ChartViewModel과 PlotExtension(첨부속성)을 연결하여 사용하는 부분 -->
                 <DataTemplate>
-                    <WpfPlot local:PlotExtensions.PlotData="{Binding Content}"/>
+                    <WpfPlot local:PlotExtensions.PlotData="{Binding SelectedTab.Content}"/>
                 </DataTemplate>
             </TabControl.ContentTemplate>
         </TabControl>
